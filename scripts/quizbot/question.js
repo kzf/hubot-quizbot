@@ -2,10 +2,17 @@ var Question = function(content, answer) {
   this.content = content;
   this.answer = answer;
   this.answered = false;
+  this.forfeitTimeout = null;
+};
+
+Question.prototype.complete = function() {
+  this.answered = true;
+  if (this.forfeitTimeout) clearTimeout(this.forfeitTimeout);
 };
 
 Question.prototype.checkResponse = function(response) {
-  if (response == answer) {
+  console.log('Checking resp::::', response, 'vs', this.answer);
+  if (response === this.answer) {
     return true;
   } else {
     return false;

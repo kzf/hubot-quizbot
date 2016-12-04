@@ -10,6 +10,7 @@
 //   hubot endround - Ends the current round
 //   hubot ask (\d+) - Asks a number of questions
 //   hubot skip - Skips all currently open questions
+//   hubot repeat - Repeats all currently open questions
 //
 // Notes:
 //   <optional notes required for the script>
@@ -71,18 +72,21 @@ module.exports = function (robot) {
   };
 
   var quiz = new Quiz({
-    FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 10,
+    FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 60,
     allQuestions: allQuestions,
     sendMessage: sendMessage,
     loadScores: loadScores,
     saveScores: saveScores,
-    // TODO: Dont pass these things in!!!
-    _: _,
   });
 
   //
   //  DEFINE ALL HUBOT COMMANDS
   //
+  robot.listen(function (msg) {
+    return quiz.checkResponse(msg.text);
+  }, function(res) {
+    quiz.checkResponse(res.envelope.message.text, res.envelope.user);
+  });
 
   robot.respond(/start/i, function (res) {
     if (!quiz.hasStarted()) {
@@ -102,7 +106,6 @@ module.exports = function (robot) {
   });
 
   robot.respond(/score/i, function (res) {
-    // TODO: Retrieve user's scores
     quiz.showScore(res.envelope.user);
   });
 
@@ -122,18 +125,10 @@ module.exports = function (robot) {
   });
 
   robot.respond(/skip/i, function(res) {
-    // TODO: Skip all open questions
-    res.send("I am going to skip all open questsions");
+    quiz.forfeitQuestions();
   });
 
   robot.respond(/endround/i, function(res) {
-    // TODO: End the round
-    res.send("I am going to end the current round");
-  });
-
-  robot.listen(function (msg) {
-    return quiz.checkResponse(msg);
-  }, function(res) {
-    quiz.checkResponse(msg, 'kevinf');
+    quiz.resetScores();
   });
 };

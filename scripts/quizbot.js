@@ -17,15 +17,47 @@
 // Author:
 //   kzf
 
-var Quiz = require('./quizbot/quiz.js');
+var Quiz = require('./quizbot/quiz.js'),
+    _ = require('underscore'),
+    Fs = require("fs");
+
 
 module.exports = function (robot) {
+  var sendMessage = function(msg) {
+    robot.send({room: process.env.ROCKETCHAT_ROOM}, msg);
+  };
+
+  //
+  //  ENVIORNMENT VARIABLE CHECKS
+  //
+
+  if (!process.env.QUIZBOT_QUESTIONS_FILE) {
+    sendMessage("Cannot start: questions file was not provided");
+    throw 1;
+  }
+
+  //
+  //  INITIAL SETUP
+  //
+
+  var allQuestions;
+  try {
+    allQuestions = JSON.parse(Fs.readFileSync(process.env.QUIZBOT_QUESTIONS_FILE));
+    allQuestions = _.shuffle(allQuestions);
+  } catch (e) {
+    sendMessage("Cannot start: could not read questions file");
+    throw 1;
+  }
+
   var quiz = new Quiz({
     FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 10,
-    sendMessage: function(msg) {
-      robot.send({room: process.env.ROCKETCHAT_ROOM}, msg);
-    },
+    allQuestions: allQuestions,
+    sendMessage: sendMessage,
   });
+
+  //
+  //  DEFINE ALL HUBOT COMMANDS
+  //
 
   robot.respond(/start/i, function (res) {
     if (!quiz.hasStarted()) {
@@ -53,8 +85,6 @@ module.exports = function (robot) {
 
   robot.respond(/ask (\d+)/i, function(res) {
     var n = res.match[1];
-    // TODO: Ask N questions;
-    res.send("I am going to ask " + n + " questions");
     for (var i = 0; i < n; i++) {
       quiz.askQuestion();
     }

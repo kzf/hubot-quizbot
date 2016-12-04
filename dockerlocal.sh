@@ -7,5 +7,8 @@ docker run -it -e ROCKETCHAT_URL=rocketchat:3000 \
     -e BOT_NAME=quizbot \
     -e EXTERNAL_SCRIPTS=hubot-help \
     -v $PWD/scripts:/home/hubot/scripts \
+    -v $PWD/questions:/home/hubot/questions \
+    -e QUIZBOT_FORFEIT_TIME=5 \
+    -e QUIZBOT_QUESTIONS_FILE=/home/hubot/questions/questions.json \
     --link rocketchat \
     rocketchat/hubot-rocketchat

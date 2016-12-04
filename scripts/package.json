@@ -1,0 +1,16 @@
+{
+  "name": "hubot-quizbot",
+  "version": "1.0.0",
+  "description": "Quiz bot for Hubot.",
+  "main": "quizbot.js",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "underscore": "^1.8.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "kzf",
+  "license": "MIT"
+}

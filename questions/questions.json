@@ -1,0 +1,14 @@
+[
+  {
+    "question": "The category is **Colors**. The question: **What colour is red?**",
+    "answer": "red"
+  },
+  {
+    "question": "The category is **Colors**. The question: **What colour is blue?**",
+    "answer": "blue"
+  },
+  {
+    "question": "The category is **Colors**. The question: **What colour is yellow?**",
+    "answer": "yellow"
+  }
+]

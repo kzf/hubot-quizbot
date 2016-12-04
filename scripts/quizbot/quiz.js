@@ -5,6 +5,9 @@ var Quiz = function(options) {
   this.FORFEIT_TIME = options.FORFEIT_TIME;
   this.scores = options.scores;
   this.sendMessage = options.sendMessage;
+  this.allQuestions = options.allQuestions;
+
+  console.log('allqs', this.allQuestions);
 
   // Set up internal properties
   this.started = false;
@@ -38,9 +41,19 @@ Quiz.prototype.showScore = function() {
 };
 
 Quiz.prototype.askQuestion = function() {
-  var newQuestion = new Question('What colour is it?', 'red');
-  this.sendMessage(newQuestion.getQuestionMessage());
+  if (this.allQuestions.length <= 0) {
+    this.sendMessage("No more questions left to ask!");
+    return;
+  }
+
+  var rawQuestion = this.allQuestions.shift();
+  var newQuestion = new Question(rawQuestion.question, rawQuestion.answer);
   this.questions.push(newQuestion);
+
+  // Send the message
+  this.sendMessage(newQuestion.getQuestionMessage());
+
+  // Set up a timeout to forfeit the question if it isn't answered
   // TODO: Memory leak here with newQuestion
   setTimeout(function() {
     this.forfeitQuestion(newQuestion);
@@ -52,6 +65,7 @@ Quiz.prototype.forfeitQuestion = function(question) {
     // Mark this question as answered
     question.answered = true;
     this.sendMessage(question.getAnswerMessage());
+
     // Remove it from the questions array
     var i = this.questions.indexOf(question);
     this.questions.splice(i, 1);

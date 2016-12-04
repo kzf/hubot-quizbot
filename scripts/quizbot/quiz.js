@@ -7,18 +7,12 @@ var Quiz = function(options) {
   this.scores = options.scores;
   this.sendMessage = options.sendMessage;
   this.allQuestions = options.allQuestions;
-  this.loadScores = options.loadScores;
   this.saveScores = options.saveScores;
 
   // Set up internal properties
   this.started = false;
   this.questions = [];
-  try {
-    this.scores = this.loadScores();
-  } catch (e) {
-    this.sendMessage("Could not load scores");
-    throw 1;
-  }
+  this.scores = options.scores;
 };
 
 // TODO: The start/stop functionality is not really needed, until we work
@@ -61,6 +55,7 @@ Quiz.prototype.resetScores = function() {
   // Revert scores to 0 for anybody who had a nonzero score, and drop anybody off the list if they had a zero score
   var nonZero = _.pick(this.scores, function(v) { return (v >= 0); });
   this.scores = _.mapObject(nonZero, function() { return 0; });
+  this.saveScores(this.scores);
 };
 
 // Repeat all questions that are currently active
@@ -99,16 +94,18 @@ Quiz.prototype.checkResponse = function(response, user) {
   // If called without a userID, will just return true if the response matches
   // any of the open questions. Otherwise, will handle closing the question
   // and assigning points to the user
-  var correctQuestion = _.find(this.questions, function(question) {
+  var correctQuestion, oldScore;
+  correctQuestion = _.find(this.questions, function(question) {
     return question.checkResponse(response);
   });
   if (correctQuestion && user) {
     this.sendMessage(correctQuestion.getCorrectAnswerMessage(user.name));
     correctQuestion.complete();
     this.forfeitQuestion(correctQuestion);
-    // TODO: Assign points to user
-    this.scores[user.name] += 5;
-    this.saveScores();
+    // Increment points by 5 for the correct answer
+    oldScore = this.scores[user.name] || 0;
+    this.scores[user.name] = oldScore + 5;
+    this.saveScores(this.scores);
   } else {
     return !!correctQuestion;
   }

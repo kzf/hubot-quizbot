@@ -39,7 +39,6 @@ module.exports = function (robot) {
   //
   //  ENVIORNMENT VARIABLE CHECKS
   //
-
   if (!process.env.QUIZBOT_QUESTIONS_FILE) {
     sendMessage("Cannot start: questions file was not provided");
     throw 1;
@@ -48,7 +47,6 @@ module.exports = function (robot) {
   //
   //  INITIAL SETUP
   //
-
   var allQuestions;
   try {
     allQuestions = JSON.parse(Fs.readFileSync(process.env.QUIZBOT_QUESTIONS_FILE));
@@ -58,25 +56,27 @@ module.exports = function (robot) {
     throw 1;
   }
 
-  var loadScores = function() {
-    // TODO: Get this from somewhere
-    return {
-      'kevinf': 12,
-      'doris': 3,
-      'rog': 71,
-    };
-  };
+  var scores;
+  try {
+    scores = JSON.parse(Fs.readFileSync(process.env.QUIZBOT_SCORES_FILE));
+  } catch (e) {
+    scores = {};
+  }
 
   var saveScores = function(newScores) {
-    // TODO: Persistence
+    try {
+      Fs.writeFileSync(process.env.QUIZBOT_SCORES_FILE, JSON.stringify(newScores), 'utf8');
+    } catch (e) {
+      sendMessage("Cannot save scores to file!");
+    }
   };
 
   var quiz = new Quiz({
     FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 60,
     allQuestions: allQuestions,
     sendMessage: sendMessage,
-    loadScores: loadScores,
     saveScores: saveScores,
+    scores: scores,
   });
 
   //
@@ -86,23 +86,6 @@ module.exports = function (robot) {
     return quiz.checkResponse(msg.text);
   }, function(res) {
     quiz.checkResponse(res.envelope.message.text, res.envelope.user);
-  });
-
-  robot.respond(/start/i, function (res) {
-    if (!quiz.hasStarted()) {
-      quiz.start();
-    } else {
-      res.send("The quiz has already started!");
-    }
-  });
-
-  robot.respond(/stop/i, function (res) {
-    if (quiz) {
-      quiz.stop();
-      res.send("The quiz has been stopped");
-    } else {
-      res.send("The quiz is already stopped!");
-    }
   });
 
   robot.respond(/score/i, function (res) {

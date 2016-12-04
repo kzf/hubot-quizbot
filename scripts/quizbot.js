@@ -23,8 +23,16 @@ var Quiz = require('./quizbot/quiz.js'),
 
 
 module.exports = function (robot) {
-  var sendMessage = function(msg) {
-    robot.send({room: process.env.ROCKETCHAT_ROOM}, msg);
+  var sendMessage = function(arg1, arg2) {
+    var opts = {room: process.env.ROCKETCHAT_ROOM},
+        msg;
+    if (arg2) {
+      msg = arg2;
+      opts = _.extend(opts, arg1);
+    } else {
+      msg = arg1;
+    }
+    robot.send(opts, msg);
   };
 
   //
@@ -49,10 +57,27 @@ module.exports = function (robot) {
     throw 1;
   }
 
+  var loadScores = function() {
+    // TODO: Get this from somewhere
+    return {
+      'kevinf': 12,
+      'doris': 3,
+      'rog': 71,
+    };
+  };
+
+  var saveScores = function(newScores) {
+    // TODO: Persistence
+  };
+
   var quiz = new Quiz({
     FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 10,
     allQuestions: allQuestions,
     sendMessage: sendMessage,
+    loadScores: loadScores,
+    saveScores: saveScores,
+    // TODO: Dont pass these things in!!!
+    _: _,
   });
 
   //
@@ -78,9 +103,11 @@ module.exports = function (robot) {
 
   robot.respond(/score/i, function (res) {
     // TODO: Retrieve user's scores
-    var userScore = 5;
-    res.reply("your score is " + userScore);
-    quiz.showScore();
+    quiz.showScore(res.envelope.user);
+  });
+
+  robot.respond(/leaderboard/i, function(res) {
+    quiz.showLeaderboard();
   });
 
   robot.respond(/ask (\d+)/i, function(res) {
@@ -90,18 +117,23 @@ module.exports = function (robot) {
     }
   });
 
-  robot.respond(/skip/i, function(res) {
-    // TODO: Skip all open questions
-    res.send("I am going to skip all open questsions");
+  robot.respond(/repeat/i, function(res) {
+    quiz.repeatQuestions();
   });
 
-  robot.respond(/leaderboard/i, function(res) {
-    // TODO: Show leaderboard
+  robot.respond(/skip/i, function(res) {
+    // TODO: Skip all open questions
     res.send("I am going to skip all open questsions");
   });
 
   robot.respond(/endround/i, function(res) {
     // TODO: End the round
     res.send("I am going to end the current round");
+  });
+
+  robot.listen(function (msg) {
+    return quiz.checkResponse(msg);
+  }, function(res) {
+    quiz.checkResponse(msg, 'kevinf');
   });
 };

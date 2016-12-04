@@ -1,3 +1,8 @@
+docker run --name db -d mongo:3.0 --smallfiles
+
+docker run --name rocketchat -p 80:3000 --env ROOT_URL=http://localhost --link db -d rocket.chat
+
+
 docker run -it -e ROCKETCHAT_URL=rocketchat:3000 \
     -e ROCKETCHAT_ROOM='YOUR_ROOM_HERE' \
     -e LISTEN_ON_ALL_PUBLIC=true \

@@ -43,7 +43,7 @@ Quiz.prototype.showLeaderboard = function() {
   });
   var msg = "";
   _.each(sorted, function(pair, i) {
-    msg += "" + (i+1) + ". " + pair[0] + ": " + pair[1] + "\n";
+    msg += "" + (i+1) + ". **" + pair[0] + "**: " + pair[1] + "\n";
   });
   this.sendMessage(msg);
 };
@@ -87,6 +87,15 @@ Quiz.prototype.askQuestion = function() {
     this.forfeitQuestion(newQuestion);
   }.bind(this), this.FORFEIT_TIME * 1000);
   newQuestion.forfeitTimeout = forfeitTimeout;
+};
+
+// Ask multiple questions
+Quiz.prototype.askQuestions = function(_n) {
+  var n = parseInt(_n);
+  if (isNaN(n)) n = 1;
+  for (var i = 0; i < n; i++) {
+    this.askQuestion();
+  }
 };
 
 // Check a user's typed response for matches to any active questions

@@ -16,5 +16,6 @@ docker run -it -e ROCKETCHAT_URL=rocketchat:3000 \
     -e QUIZBOT_FORFEIT_TIME=15 \
     -e QUIZBOT_QUESTIONS_FILE=/home/hubot/data/questions.json \
     -e QUIZBOT_SCORES_FILE=/home/hubot/data/scores.json \
+    -e QUIZBOT_BANG_COMMANDS=true \
     --link rocketchat \
     rocketchat/hubot-rocketchat

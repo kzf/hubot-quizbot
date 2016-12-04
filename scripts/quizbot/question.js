@@ -40,7 +40,6 @@ Question.prototype.complete = function() {
 };
 
 Question.prototype.checkResponse = function(response) {
-  console.log('Checking resp::::', response, 'vs', this.answer);
   var noParens = removeParens(this.answer);
   var score1 = matchScore(normalize(response), normalize(this.answer))/Math.min(response.length, this.answer.length);
   var score2 = matchScore(normalize(response), normalize(noParens))/Math.min(response.length, noParens.length);
@@ -54,7 +53,7 @@ Question.prototype.checkResponse = function(response) {
 };
 
 Question.prototype.getQuestionMessage = function() {
-  return "Question: " + this.content;
+  return this.content;
 };
 
 Question.prototype.getAnswerMessage = function() {

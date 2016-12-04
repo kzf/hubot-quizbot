@@ -83,35 +83,40 @@ module.exports = function (robot) {
   //  DEFINE ALL HUBOT COMMANDS
   //
   robot.listen(function (msg) {
-    return quiz.checkResponse(msg.text);
+    // We don't care at all if msg.text is undefined
+    return msg.text && quiz.checkResponse(msg.text);
   }, function(res) {
     quiz.checkResponse(res.envelope.message.text, res.envelope.user);
   });
 
-  robot.respond(/score/i, function (res) {
-    quiz.showScore(res.envelope.user);
-  });
+  // Define commands
+  // TODO: How can we avoid the ugly escaping here?
+  var commands = {
+    'score' : function (res) {
+      quiz.showScore(res.envelope.user);
+    },
+    '(score|leader(board)?)s?' : function(res) {
+      quiz.showLeaderboard();
+    },
+    'ask( \\d+)?' : function(res) {
+      quiz.askQuestions(res.match[1]);
+    },
+    'repeat' : function(res) {
+      quiz.repeatQuestions();
+    },
+    'skip' : function(res) {
+      quiz.forfeitQuestions();
+    },
+    'endround' : function(res) {
+      quiz.resetScores();
+    },
+  };
 
-  robot.respond(/leaderboard/i, function(res) {
-    quiz.showLeaderboard();
-  });
-
-  robot.respond(/ask (\d+)/i, function(res) {
-    var n = res.match[1];
-    for (var i = 0; i < n; i++) {
-      quiz.askQuestion();
+  _.mapObject(commands, function(handler, command) {
+    if (process.env.QUIZBOT_BANG_COMMANDS === 'true') {
+      robot.hear(new RegExp("^!"+command+"$", 'i'), handler);
+    } else {
+      robot.respond(new RegExp(command, 'i'), handler);
     }
-  });
-
-  robot.respond(/repeat/i, function(res) {
-    quiz.repeatQuestions();
-  });
-
-  robot.respond(/skip/i, function(res) {
-    quiz.forfeitQuestions();
-  });
-
-  robot.respond(/endround/i, function(res) {
-    quiz.resetScores();
   });
 };

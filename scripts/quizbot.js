@@ -21,7 +21,10 @@ var Quiz = require('./quizbot/quiz.js');
 
 module.exports = function (robot) {
   var quiz = new Quiz({
-    forfeitTime: 10,
+    FORFEIT_TIME: process.env.QUIZBOT_FORFEIT_TIME || 10,
+    sendMessage: function(msg) {
+      robot.send({room: process.env.ROCKETCHAT_ROOM}, msg);
+    },
   });
 
   robot.respond(/start/i, function (res) {

@@ -1,6 +1,7 @@
 var Question = function(content, answer) {
   this.content = content;
   this.answer = answer;
+  this.answered = false;
 };
 
 Question.prototype.checkResponse = function(response) {
@@ -18,3 +19,9 @@ Question.prototype.getQuestionMessage = function() {
 Question.prototype.getAnswerMessage = function() {
   return "The answer was: **" + this.answer + "**";
 };
+
+Question.prototype.getCorrectAnswerMessage = function(user) {
+  return user + " got the correct answer: **" + this.answer + "**";
+};
+
+module.exports = Question;

@@ -45,7 +45,7 @@ Quiz.prototype.showScore = function(user) {
 // Show points for every user in the system
 Quiz.prototype.showLeaderboard = function() {
   var sorted = _.sortBy(_.pairs(this.scores), function(pair) {
-    return pair[1];
+    return -pair[1];
   });
   var msg = "";
   _.each(sorted, function(pair, i) {

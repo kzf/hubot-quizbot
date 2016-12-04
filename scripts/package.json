@@ -5,6 +5,7 @@
   "main": "quizbot.js",
   "dependencies": {
     "fs": "0.0.1-security",
+    "natural": "^0.4.0",
     "underscore": "^1.8.3"
   },
   "devDependencies": {},

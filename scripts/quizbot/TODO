@@ -1,3 +1,4 @@
+o Make the messages customisable in a file
 o Ask question by category
 o Support for more than 5 questions asked
 o Fix crash when typing a long message due to crazy amount of processing

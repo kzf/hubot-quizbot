@@ -130,11 +130,11 @@ Question.prototype.getAnswerMessage = function() {
 };
 
 Question.prototype.getCorrectAnswerMessage = function(user) {
-  return "@" + user + " answered **Q" + this.id + "** correctly: **" + this.answer + "**";
+  return "@" + user + " answered **Q" + this.id + "** correctly: **" + this.answer + "** :clap: :clap:";
 };
 
 Question.prototype.getCloseAnswerMessage = function(response, user) {
-  return "**" + response + "** is close for **Q" + this.id + "**, keep trying @" + user;
+  return "**" + response + "** is close for **Q" + this.id + "** :thinking:";
 };
 
 Question.prototype.getHint = function(level) {

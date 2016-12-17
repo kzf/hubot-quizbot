@@ -60,6 +60,8 @@ testAnswer('i can help falling in lve with you', 'i cant help falling in love wi
 testAnswer('the preponderance of evidence', 'evidence', true);
 testAnswer('the spirelles', 'the supremes', false);
 testAnswer('tetanus racket', 'a tennis racket', 'close');
+testAnswer('bobby juner', 'bobby jones', 'close');
+testAnswer('opens and closes', 'open & close', true); // something with plurals?
 
 
 // testAnswer('', 'red', false)

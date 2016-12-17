@@ -24,7 +24,7 @@ var Quiz = require('./quizbot/quiz.js'),
 
 
 module.exports = function (robot) {
-  var sendMessage = function(arg1, arg2) {
+  var sendMessage = function(arg1, arg2, attempts) {
     var opts = {room: process.env.ROCKETCHAT_ROOM},
         msg;
     if (arg2) {
@@ -98,8 +98,8 @@ module.exports = function (robot) {
     '(score|leader(board)?)s?' : function(res) {
       quiz.showLeaderboard();
     },
-    'ask( \\d+)?' : function(res) {
-      quiz.askQuestions(res.match[1]);
+    'ask( \\d+)?( .*)?' : function(res) {
+      quiz.askQuestions(res.match[1], res.match[2]);
     },
     'repeat' : function(res) {
       quiz.repeatQuestions();

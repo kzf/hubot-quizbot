@@ -71,15 +71,15 @@ Quiz.prototype.repeatQuestions = function() {
 };
 
 // Ask a new question, push it onto the list of currently active questions
-Quiz.prototype.askQuestion = function() {
+Quiz.prototype.askQuestion = function(question) {
   var rawQuestion, newQuestion, forfeitTimeout;
 
-  if (this.allQuestions.length <= 0) {
+  if (!question && this.allQuestions.length <= 0) {
     this.sendMessage("No more questions left to ask!");
     return;
   }
 
-  rawQuestion = this.allQuestions.shift();
+  rawQuestion = question || this.allQuestions.shift();
   newQuestion = new Question(++this.questionCount, rawQuestion.question, rawQuestion.response);
   this.questions.push(newQuestion);
 
@@ -95,15 +95,44 @@ Quiz.prototype.askQuestion = function() {
 };
 
 // Ask multiple questions
-Quiz.prototype.askQuestions = function(_n) {
-  var n = parseInt(_n);
+Quiz.prototype.askQuestions = function(_n, _category) {
+  var n = parseInt(_n),
+      category = _category && _category.trim();
   if (isNaN(n)) n = 1;
   if (n > 5) {
     this.sendMessage("I can't ask more than 5 questions at once!");
     return;
   }
+  if (category) {
+    return this.askQuestionsFromCategory(n, category);
+  }
   for (var i = 0; i < n; i++) {
     this.askQuestion();
+  }
+};
+
+Quiz.prototype.askQuestionsFromCategory = function(n, category) {
+  var fromCategoryIndices = [],
+      shuffled,
+      reg = new RegExp(category, 'i');
+  this.allQuestions.forEach(function(q, i) {
+    if (q.question.match(reg)) {
+      fromCategoryIndices.push(i);
+    }
+  });
+  //
+  qIndices = _.shuffle(fromCategoryIndices).slice(0, n);
+  qIndices.sort(function (a,b) { return a - b; });
+
+  var i, j;
+  for (i = qIndices.length - 1; i >= 0; i--) {
+    j = qIndices[i];
+    this.askQuestion(this.allQuestions[j]);
+    this.allQuestions.splice(j, 1);
+  }
+
+  if (qIndices.length < n) {
+    this.sendMessage("I can't find any more questions for **" + category + "**");
   }
 };
 

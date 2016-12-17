@@ -14,7 +14,7 @@ function removeParens(string) {
 function matchScore(message, response, earlyExitThreshold, verbose) {
   if (message === '' || response === '') return Infinity;
   var baseScore = natural.LevenshteinDistance(message, response, {
-    insertion_cost: 1, deletion_cost: 0.5, substitution_cost: 1
+    insertion_cost: 1, deletion_cost: 0.65, substitution_cost: 1
   });
   if (verbose) console.log('baseScore:    [', message, '<=>', response, '] is', baseScore);
   // natural.JaroWinklerDistance(message, response);
@@ -32,20 +32,28 @@ function matchScore(message, response, earlyExitThreshold, verbose) {
   return Math.min(baseScore, leftScore, rightScore);
 }
 
+
+function adjustScore(message, response, verbose) {
+  var rawScore = matchScore(message, response, 8, verbose),
+      length = Math.min(Math.pow(Math.min(message.length, response.length), 1.2)/1.6, 14);
+  if (verbose) console.log('    ---adjust [', message, '<==>', response, '] from ('+rawScore+') to ('+rawScore/length+')')
+  return rawScore/length;
+}
+
 function checkAnswer(message, response, verbose) {
   var len = Math.min(message.length, response.length);
   var normalMessage = normalize(message),
       normalResponse = normalize(response),
       respNoParens = removeParens(response),
       normalRespNoParens = normalize(respNoParens);
-  var score1 = matchScore(normalMessage, normalResponse, 8, verbose)/Math.min(message.length, response.length);
-  var score2 = matchScore(normalMessage, normalRespNoParens, 8, verbose)/Math.min(message.length, respNoParens.length);
+  var score1 = adjustScore(normalMessage, normalResponse, verbose);
+  var score2 = adjustScore(normalMessage, normalRespNoParens, verbose);
   if (verbose) console.log('comparing', normalMessage, normalResponse);
   if (verbose) console.log('comparing', normalMessage, normalRespNoParens);
   if (verbose) console.log('got score', score1, score2);
   var sc = Math.min(score1, score2);
   if (sc < 0.2) return true;
-  if (sc < 0.6) return 'close';
+  if (sc < 0.5) return 'close';
   if (normalMessage.length >= 5 && normalResponse.indexOf(normalMessage) >= 0) return 'close';
   return false;
 }

@@ -59,6 +59,7 @@ testAnswer('i can pleh fullin low vit you', 'i cant help falling in love with yo
 testAnswer('i can help falling in lve with you', 'i cant help falling in love with you', true);
 testAnswer('the preponderance of evidence', 'evidence', true);
 testAnswer('the spirelles', 'the supremes', false);
+testAnswer('tetanus racket', 'a tennis racket', 'close');
 
 
 // testAnswer('', 'red', false)

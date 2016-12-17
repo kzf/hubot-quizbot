@@ -158,4 +158,12 @@ Quiz.prototype._forfeitQuestionInternal = function(question) {
   }
 };
 
+// Get hint(s) to open questions
+Quiz.prototype.getHints = function() {
+  this.questions.forEach(function(q) {
+    q.improveHint();
+    this.sendMessage(q.getHintMessage());
+  }.bind(this));
+};
+
 module.exports = Quiz;

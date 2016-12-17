@@ -15,7 +15,7 @@ function testAnswer(message, response, testValue) {
 
 
 testAnswer('red', 'red', true)
-testAnswer('rod', 'red', 'close')
+testAnswer('rod', 'red', false)
 testAnswer('strumming', 'Strumming', true)
 testAnswer('strummin', 'Strumming', true)
 testAnswer('', 'red', false)
@@ -58,6 +58,7 @@ testAnswer('i cant help falling', 'i cant help falling in love with you', 'close
 testAnswer('i can pleh fullin low vit you', 'i cant help falling in love with you', false);
 testAnswer('i can help falling in lve with you', 'i cant help falling in love with you', true);
 testAnswer('the preponderance of evidence', 'evidence', true);
+testAnswer('the spirelles', 'the supremes', false);
 
 
 // testAnswer('', 'red', false)

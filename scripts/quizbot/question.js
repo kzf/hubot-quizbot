@@ -53,7 +53,7 @@ function checkAnswer(message, response, verbose) {
   if (verbose) console.log('got score', score1, score2);
   var sc = Math.min(score1, score2);
   if (sc < 0.2) return true;
-  if (sc < 0.5) return 'close';
+  if (sc < 0.4) return 'close';
   if (normalMessage.length >= 5 && normalResponse.indexOf(normalMessage) >= 0) return 'close';
   return false;
 }
@@ -64,6 +64,7 @@ var Question = function(id, content, answer) {
   this.answer = answer;
   this.answered = false;
   this.forfeitTimeout = null;
+  this.hintLevel = 0;
 };
 
 Question.prototype.complete = function() {
@@ -76,19 +77,73 @@ Question.prototype.checkResponse = function(response, verbose) {
 };
 
 Question.prototype.getQuestionMessage = function() {
-  return "**Q." + this.id + "** " + this.content;
+  return "**Q" + this.id + "** " + this.content;
 };
 
 Question.prototype.getAnswerMessage = function() {
-  return "The answer to **Q." + this.id + "** was: **" + this.answer + "**";
+  return "The answer to **Q" + this.id + "** was: **" + this.answer + "**";
 };
 
 Question.prototype.getCorrectAnswerMessage = function(user) {
-  return user + " answered **Q." + this.id + "** correctly: **" + this.answer + "**";
+  return "@" + user + " answered **Q" + this.id + "** correctly: **" + this.answer + "**";
 };
 
 Question.prototype.getCloseAnswerMessage = function(response, user) {
-  return "**" + response + "** is close for **Q." + this.id + "**, keep trying " + user;
+  return "**" + response + "** is close for **Q" + this.id + "**, keep trying @" + user;
+};
+
+function maskify(word, showFirst) {
+  var spl = word.split('');
+  var ret = showFirst ? spl[0] : '_';
+  for (var i = 0; i < spl.length - 1; i++) {
+    ret += " _";
+  }
+  return ret;
+}
+
+function getHint(response, level, verbose) {
+  var split = response.split(/\b/);
+  if (verbose) console.log('      Split: ', split);
+  var i, tmp, words = 0, transformed = [];
+  for (i = 0; i < split.length; i++) {
+    if (split[i].match(/^\w+$/)) {
+      if (level > 0) {
+        transformed[i] = maskify(split[i], true);
+        level--;
+      } else {
+        transformed[i] = maskify(split[i]);
+      }
+      words++;
+    } else if (split[i].match(/^\s+$/)) {
+      transformed[i] = ' / ';
+    } else {
+      transformed[i] = split[i];
+    }
+  }
+  if (level >= words) return false;
+  for (i = 0; i < split.length; i++) {
+    if (split[i].match(/^\w+$/)) {
+      if (level > 0) {
+        transformed[i] = split[i];
+        level--;
+      }
+    }
+  }
+  if (verbose) console.log('Transformed: ', transformed);
+  return transformed.join('');
+}
+
+Question.prototype.getHintMessage = function() {
+  var hint = getHint(this.answer, this.hintLevel, true);
+  if (hint) {
+    return "Q" + this.id + " hint: `" + hint + "`";
+  } else {
+    return "No more hints available for **Q" + this.id + "**";
+  }
+};
+
+Question.prototype.improveHint = function() {
+  this.hintLevel++;
 };
 
 module.exports = Question;

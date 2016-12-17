@@ -110,6 +110,9 @@ module.exports = function (robot) {
     'endround' : function(res) {
       quiz.resetScores();
     },
+    'hints?' : function(res) {
+      quiz.getHints();
+    },
   };
 
   _.mapObject(commands, function(handler, command) {

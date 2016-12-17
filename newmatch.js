@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var natural = require('natural');
 
 function normalize(string) {
@@ -50,36 +51,53 @@ function checkAnswer(message, response, verbose) {
   return false;
 }
 
-var Question = function(content, answer) {
-  this.content = content;
-  this.answer = answer;
-  this.answered = false;
-  this.forfeitTimeout = null;
-};
+function testAnswer(message, response, testValue) {
+  var result = checkAnswer(message, response);
+  if (result === testValue) {
+    console.log('passed');
+  } else {
+    console.log('Test Failed: ', message, '=!=', response, '(', result, ')');
+    console.log('------------------------------------');
+    checkAnswer(message, response, true);
+    console.log('------------------------------------');
+  }
+}
 
-Question.prototype.complete = function() {
-  this.answered = true;
-  if (this.forfeitTimeout) clearTimeout(this.forfeitTimeout);
-};
 
-Question.prototype.checkResponse = function(response, verbose) {
-  return checkAnswer(response, this.answer, verbose);
-};
+testAnswer('red', 'red', true)
+testAnswer('rod', 'red', 'close')
+testAnswer('strumming', 'Strumming', true)
+testAnswer('strummin', 'Strumming', true)
+testAnswer('', 'red', false)
+testAnswer('r', 'red', false)
+testAnswer('thud', 'T-H-U-D', true)
+testAnswer('Mr Rogers', 'Rogers', true)
+testAnswer('Mr. Rogers', 'rogers', true)
+testAnswer('dennis kusinich', 'Dennis (T.) Kusinich', true)
+testAnswer('dennis t kusinich', 'Dennis (T.) Kusinich', true)
+testAnswer('dennis kusinch', 'Dennis (T.) Kusinich', true)
+testAnswer('denis kusinich', 'Dennis (T.) Kusinich', true)
+testAnswer('des kusinich', 'Dennis (T.) Kusinich', 'close')
+testAnswer('dennas kusinich', 'Dennis (T.) Kusinich', true)
+testAnswer('someone red', 'Someone', true)
+testAnswer('red cross', 'The Red Cross', true)
+testAnswer('ford', '(Harold) Ford', true)
+testAnswer('harold ford', '(Harold) Ford', true)
+testAnswer('hardold ford', '(Harold) Ford', true)
+testAnswer('harry ford', '(Harold) Ford', true)
+testAnswer('harry', '(Harold) Ford', false)
+testAnswer('Harold', '(Harold) Ford', 'close')
+testAnswer('george carlin', 'KLM', false)
+testAnswer('come on joon you are the tennis man', '(Arthur) Ashe', false)
+testAnswer('come on joon you aseh tennis man', '(Arthur) Ashe', false)
+testAnswer('peace and quiet', '"Peace of Mind"', 'close')
+testAnswer('etaoi', 'i', false);
+testAnswer('etaoinshrdlu', 'i', false);
+testAnswer('the lion', 'the cowardly lion', false);
+testAnswer('cool', 'kool', 'close');
+testAnswer('nobel', 'nobel prizes', 'close');
 
-Question.prototype.getQuestionMessage = function() {
-  return this.content;
-};
 
-Question.prototype.getAnswerMessage = function() {
-  return "The answer was: **" + this.answer + "**";
-};
-
-Question.prototype.getCorrectAnswerMessage = function(user) {
-  return user + " got the correct answer: **" + this.answer + "**";
-};
-
-Question.prototype.getCloseAnswerMessage = function(user) {
-  return "**" + this.answer + "** is close, keep trying " + user;
-};
-
-module.exports = Question;
+// testAnswer('', 'red', false)
+//
+// // testAnswer('Mr Rogers', 'Rogers', true)

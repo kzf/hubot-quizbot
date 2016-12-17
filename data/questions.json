@@ -1,27 +1,27 @@
 [
   {
     "question": "The category is **Colors**. The question: **What colour is red?**",
-    "answer": "red"
+    "response": "red"
   },
   {
     "question": "The category is **Colors**. The question: **What colour is blue?**",
-    "answer": "blue"
+    "response": "blue"
   },
   {
     "question": "The category is **Colors**. The question: **What colour is yellow?**",
-    "answer": "yellow"
+    "response": "yellow"
   },
   {
     "question": "The category is **Colors**. The question: **What colour is viridian purple?**",
-    "answer": "viridian purple"
+    "response": "viridian purple"
   },
   {
     "question": "The category is **Colors**. The question: **What colour is burnt umber?**",
-    "answer": "burnt umber"
+    "response": "burnt umber"
   },
   {
     "question": "The category is **Colors**. The question: **What colour is phthalo blue?**",
-    "answer": "phthalo blue"
+    "response": "phthalo blue"
   }
 
 ]

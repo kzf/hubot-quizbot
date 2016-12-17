@@ -75,7 +75,7 @@ Quiz.prototype.askQuestion = function() {
   }
 
   rawQuestion = this.allQuestions.shift();
-  newQuestion = new Question(rawQuestion.question, rawQuestion.answer);
+  newQuestion = new Question(rawQuestion.question, rawQuestion.response);
   this.questions.push(newQuestion);
 
   // Send the message

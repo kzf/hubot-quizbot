@@ -53,6 +53,11 @@ testAnswer('trix is for keeds!', '"The Wizard of Oz"', false);
 testAnswer('carrot', 'carrots', true);
 testAnswer('ashton kutcher and demi moorse', 'ashton kutcher and demi moore', true);
 testAnswer('ashton kutcher demi moorse', 'ashton kutcher and demi moore', 'close');
+testAnswer('i cant help love with you', 'i cant help falling in love with you', false);
+testAnswer('i cant help falling', 'i cant help falling in love with you', 'close');
+testAnswer('i can pleh fullin low vit you', 'i cant help falling in love with you', false);
+testAnswer('i can help falling in lve with you', 'i cant help falling in love with you', true);
+testAnswer('the preponderance of evidence', 'evidence', true);
 
 
 // testAnswer('', 'red', false)

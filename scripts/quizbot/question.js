@@ -34,7 +34,7 @@ function matchScore(message, response, earlyExitThreshold, verbose) {
 
 
 function adjustScore(message, response, verbose) {
-  var rawScore = matchScore(message, response, 8, verbose),
+  var rawScore = matchScore(message, response, Infinity, verbose),
       length = Math.min(Math.pow(Math.min(message.length, response.length), 1.2)/1.6, 14);
   if (verbose) console.log('    ---adjust [', message, '<==>', response, '] from ('+rawScore+') to ('+rawScore/length+')')
   return rawScore/length;

@@ -122,11 +122,7 @@ Quiz.prototype.checkResponse = function(response, user) {
 
 // Forfeit a question, revealing the answer if it was still open and closing it
 Quiz.prototype.forfeitQuestion = function(question) {
-  if (!question.answered) {
-    // Mark this question as answered
-    question.complete();
-    this.sendMessage(question.getAnswerMessage());
-  }
+  this._forfeitQuestionInternal(question);
   // Remove it from the questions array
   var i = this.questions.indexOf(question);
   if (i >= 0) this.questions.splice(i, 1);
@@ -135,8 +131,18 @@ Quiz.prototype.forfeitQuestion = function(question) {
 // Forfeit all questions that are currently active
 Quiz.prototype.forfeitQuestions = function() {
   this.questions.forEach(function(q) {
-    this.forfeitQuestion(q);
+    this._forfeitQuestionInternal(q);
   }.bind(this));
+  this.questions = [];
+};
+
+// What is actually involved in forefeiting a question
+Quiz.prototype._forfeitQuestionInternal = function(question) {
+  if (!question.answered) {
+    // Mark this question as answered
+    question.complete();
+    this.sendMessage(question.getAnswerMessage());
+  }
 };
 
 module.exports = Quiz;

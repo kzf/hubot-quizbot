@@ -162,7 +162,10 @@ Quiz.prototype._forfeitQuestionInternal = function(question) {
 Quiz.prototype.getHints = function() {
   this.questions.forEach(function(q) {
     q.improveHint();
-    this.sendMessage(q.getHintMessage());
+    var hint = q.getHint();
+    if (hint) {
+      this.sendMessage("**Q" + q.id + "** hint: `" + hint + "`");
+    }
   }.bind(this));
 };
 

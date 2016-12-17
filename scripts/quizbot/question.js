@@ -1,5 +1,7 @@
 var natural = require('natural');
 
+// Answer matching
+
 function normalize(string) {
   return string.toLowerCase()
                .replace(/\b(a|an|the|in|of|it|its|his|her|hers)\b/gi,'')
@@ -58,39 +60,7 @@ function checkAnswer(message, response, verbose) {
   return false;
 }
 
-var Question = function(id, content, answer) {
-  this.id = id;
-  this.content = content;
-  this.answer = answer;
-  this.answered = false;
-  this.forfeitTimeout = null;
-  this.hintLevel = 0;
-};
-
-Question.prototype.complete = function() {
-  this.answered = true;
-  if (this.forfeitTimeout) clearTimeout(this.forfeitTimeout);
-};
-
-Question.prototype.checkResponse = function(response, verbose) {
-  return checkAnswer(response, this.answer, verbose);
-};
-
-Question.prototype.getQuestionMessage = function() {
-  return "**Q" + this.id + "** " + this.content;
-};
-
-Question.prototype.getAnswerMessage = function() {
-  return "The answer to **Q" + this.id + "** was: **" + this.answer + "**";
-};
-
-Question.prototype.getCorrectAnswerMessage = function(user) {
-  return "@" + user + " answered **Q" + this.id + "** correctly: **" + this.answer + "**";
-};
-
-Question.prototype.getCloseAnswerMessage = function(response, user) {
-  return "**" + response + "** is close for **Q" + this.id + "**, keep trying @" + user;
-};
+// hints
 
 function maskify(word, showFirst) {
   var spl = word.split('');
@@ -133,13 +103,42 @@ function getHint(response, level, verbose) {
   return transformed.join('');
 }
 
-Question.prototype.getHintMessage = function() {
-  var hint = getHint(this.answer, this.hintLevel, true);
-  if (hint) {
-    return "Q" + this.id + " hint: `" + hint + "`";
-  } else {
-    return "No more hints available for **Q" + this.id + "**";
-  }
+var Question = function(id, content, answer) {
+  this.id = id;
+  this.content = content;
+  this.answer = answer;
+  this.answered = false;
+  this.forfeitTimeout = null;
+  this.hintLevel = 0;
+};
+
+Question.prototype.complete = function() {
+  this.answered = true;
+  if (this.forfeitTimeout) clearTimeout(this.forfeitTimeout);
+};
+
+Question.prototype.checkResponse = function(response, verbose) {
+  return checkAnswer(response, this.answer, verbose);
+};
+
+Question.prototype.getQuestionMessage = function() {
+  return "**Q" + this.id + "** " + this.content;
+};
+
+Question.prototype.getAnswerMessage = function() {
+  return "The answer to **Q" + this.id + "** was: **" + this.answer + "**";
+};
+
+Question.prototype.getCorrectAnswerMessage = function(user) {
+  return "@" + user + " answered **Q" + this.id + "** correctly: **" + this.answer + "**";
+};
+
+Question.prototype.getCloseAnswerMessage = function(response, user) {
+  return "**" + response + "** is close for **Q" + this.id + "**, keep trying @" + user;
+};
+
+Question.prototype.getHint = function(level) {
+  return getHint(this.answer, level || this.hintLevel);
 };
 
 Question.prototype.improveHint = function() {

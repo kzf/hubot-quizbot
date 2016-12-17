@@ -1,7 +1,3 @@
-o Fix skip issue
-o Tell them if answer is 'close'
-o Number the questions
 o Ask question by category
 o Support for more than 5 questions asked
-o Question hints
 o Fix crash when typing a long message due to crazy amount of processing

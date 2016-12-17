@@ -1,52 +1,14 @@
-function maskify(word, showFirst) {
-  var spl = word.split('');
-  var ret = showFirst ? spl[0] : '_';
-  for (var i = 0; i < spl.length - 1; i++) {
-    ret += " _";
-  }
-  return ret;
-}
-
-function getHint(response, level, verbose) {
-  var split = response.split(/\b/);
-  if (verbose) console.log('      Split: ', split);
-  var i, tmp, words = 0, transformed = [];
-  for (i = 0; i < split.length; i++) {
-    if (split[i].match(/^\w+$/)) {
-      if (level > 0) {
-        transformed[i] = maskify(split[i], true);
-        level--;
-      } else {
-        transformed[i] = maskify(split[i]);
-      }
-      words++;
-    } else if (split[i].match(/^\s+$/)) {
-      transformed[i] = ' / ';
-    } else {
-      transformed[i] = split[i];
-    }
-  }
-  if (level >= words) return false;
-  for (i = 0; i < split.length; i++) {
-    if (split[i].match(/^\w+$/)) {
-      if (level > 0) {
-        transformed[i] = split[i];
-        level--;
-      }
-    }
-  }
-  if (verbose) console.log('Transformed: ', transformed);
-  return transformed.join('');
-}
+var Question = require('./scripts/quizbot/question.js')
 
 function testHint(response, expected, level) {
-  var result = getHint(response, level);
+  var q = new Question(1, '', response);
+  var result = q.getHint(level);
   if (result === expected) {
     console.log('passed');
   } else {
     console.log('Test Failed: ', result, '=!=', expected, '(', level, ')');
     console.log('------------------------------------');
-    getHint(response, level, true);
+    q.getHint(response, level, true);
     console.log('------------------------------------');
   }
 }

@@ -84,7 +84,7 @@ module.exports = function (robot) {
   //
   robot.listen(function (msg) {
     // We don't care at all if msg.text is undefined
-    return msg.text && quiz.checkResponse(msg.text);
+    return !!msg.text;
   }, function(res) {
     quiz.checkResponse(res.envelope.message.text, res.envelope.user);
   });

@@ -96,6 +96,8 @@ testAnswer('etaoinshrdlu', 'i', false);
 testAnswer('the lion', 'the cowardly lion', false);
 testAnswer('cool', 'kool', 'close');
 testAnswer('nobel', 'nobel prizes', 'close');
+testAnswer('new york yankees', 'neck', false);
+testAnswer('canvasse', 'a canvas', 'close');
 
 
 // testAnswer('', 'red', false)

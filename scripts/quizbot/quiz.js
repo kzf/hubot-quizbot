@@ -13,6 +13,7 @@ var Quiz = function(options) {
   this.started = false;
   this.questions = [];
   this.scores = options.scores;
+  this.questionCount = 0;
 };
 
 // TODO: The start/stop functionality is not really needed, until we work
@@ -28,6 +29,10 @@ Quiz.prototype.start = function() {
 
 Quiz.prototype.stop = function() {
   this.started = false;
+};
+
+Quiz.prototype.resetQuestionCount = function() {
+  if (this.questions.length == 0) this.questionCount = 0;
 };
 
 // Show score for one user
@@ -75,7 +80,7 @@ Quiz.prototype.askQuestion = function() {
   }
 
   rawQuestion = this.allQuestions.shift();
-  newQuestion = new Question(rawQuestion.question, rawQuestion.response);
+  newQuestion = new Question(++this.questionCount, rawQuestion.question, rawQuestion.response);
   this.questions.push(newQuestion);
 
   // Send the message
@@ -93,6 +98,10 @@ Quiz.prototype.askQuestion = function() {
 Quiz.prototype.askQuestions = function(_n) {
   var n = parseInt(_n);
   if (isNaN(n)) n = 1;
+  if (n > 5) {
+    this.sendMessage("I can't ask more than 5 questions at once!");
+    return;
+  }
   for (var i = 0; i < n; i++) {
     this.askQuestion();
   }
@@ -100,24 +109,26 @@ Quiz.prototype.askQuestions = function(_n) {
 
 // Check a user's typed response for matches to any active questions
 Quiz.prototype.checkResponse = function(response, user) {
-  // If called without a userID, will just return true if the response matches
-  // any of the open questions. Otherwise, will handle closing the question
-  // and assigning points to the user
+  if (!user) return;
   var correctQuestion, oldScore;
-  correctQuestion = _.find(this.questions, function(question) {
-    return question.checkResponse(response);
-  });
-  if (correctQuestion && user) {
-    this.sendMessage(correctQuestion.getCorrectAnswerMessage(user.name));
-    correctQuestion.complete();
-    this.forfeitQuestion(correctQuestion);
-    // Increment points by 5 for the correct answer
-    oldScore = this.scores[user.name] || 0;
-    this.scores[user.name] = oldScore + 5;
-    this.saveScores(this.scores);
-  } else {
-    return !!correctQuestion;
-  }
+  this.questions.forEach(function(question) {
+    var check = question.checkResponse(response);
+    if (check == true) {
+      // Correct Answer
+      this.sendMessage(question.getCorrectAnswerMessage(user.name));
+      question.complete();
+      this.forfeitQuestion(question);
+      // Increment points by 5 for the correct answer
+      oldScore = this.scores[user.name] || 0;
+      this.scores[user.name] = oldScore + 5;
+      this.saveScores(this.scores);
+    } else if (check == 'close') {
+      // Close Answer
+      this.sendMessage(question.getCloseAnswerMessage(response, user.name));
+    } else {
+      // Wrong answer, do nothing
+    }
+  }.bind(this));
 };
 
 // Forfeit a question, revealing the answer if it was still open and closing it
@@ -126,6 +137,7 @@ Quiz.prototype.forfeitQuestion = function(question) {
   // Remove it from the questions array
   var i = this.questions.indexOf(question);
   if (i >= 0) this.questions.splice(i, 1);
+  this.resetQuestionCount();
 };
 
 // Forfeit all questions that are currently active
@@ -134,6 +146,7 @@ Quiz.prototype.forfeitQuestions = function() {
     this._forfeitQuestionInternal(q);
   }.bind(this));
   this.questions = [];
+  this.resetQuestionCount();
 };
 
 // What is actually involved in forefeiting a question

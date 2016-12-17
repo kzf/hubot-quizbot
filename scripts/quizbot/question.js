@@ -50,7 +50,8 @@ function checkAnswer(message, response, verbose) {
   return false;
 }
 
-var Question = function(content, answer) {
+var Question = function(id, content, answer) {
+  this.id = id;
   this.content = content;
   this.answer = answer;
   this.answered = false;
@@ -67,19 +68,19 @@ Question.prototype.checkResponse = function(response, verbose) {
 };
 
 Question.prototype.getQuestionMessage = function() {
-  return this.content;
+  return "**Q." + this.id + "** " + this.content;
 };
 
 Question.prototype.getAnswerMessage = function() {
-  return "The answer was: **" + this.answer + "**";
+  return "The answer to **Q." + this.id + "** was: **" + this.answer + "**";
 };
 
 Question.prototype.getCorrectAnswerMessage = function(user) {
-  return user + " got the correct answer: **" + this.answer + "**";
+  return user + " answered **Q." + this.id + "** correctly: **" + this.answer + "**";
 };
 
-Question.prototype.getCloseAnswerMessage = function(user) {
-  return "**" + this.answer + "** is close, keep trying " + user;
+Question.prototype.getCloseAnswerMessage = function(response, user) {
+  return "**" + response + "** is close for **Q." + this.id + "**, keep trying " + user;
 };
 
 module.exports = Question;

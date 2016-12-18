@@ -47,12 +47,14 @@ testAnswer('the lion', 'the cowardly lion', false);
 testAnswer('cool', 'kool', 'close');
 testAnswer('nobel', 'nobel prizes', 'close');
 testAnswer('new york yankees', 'neck', false);
-testAnswer('canvasse', 'a canvas', 'close');
+testAnswer('canvass', 'a canvas', 'close');
+testAnswer('canvasse', 'a canvas', false);
 testAnswer('tiger lily', 'the Aztecs', false);
 testAnswer('trix is for keeds!', '"The Wizard of Oz"', false);
 testAnswer('carrot', 'carrots', true);
 testAnswer('ashton kutcher and demi moorse', 'ashton kutcher and demi moore', true);
-testAnswer('ashton kutcher demi moorse', 'ashton kutcher and demi moore', 'close');
+testAnswer('ashton kutcher demi moorse', 'ashton kutcher and demi moore', true);
+testAnswer('aston kotcher dami moorse', 'ashton kutcher and demi moore', 'close');
 testAnswer('i cant help love with you', 'i cant help falling in love with you', false);
 testAnswer('i cant help falling', 'i cant help falling in love with you', 'close');
 testAnswer('i can pleh fullin low vit you', 'i cant help falling in love with you', false);
@@ -61,6 +63,7 @@ testAnswer('the preponderance of evidence', 'evidence', true);
 testAnswer('the spirelles', 'the supremes', false);
 testAnswer('tetanus racket', 'a tennis racket', 'close');
 testAnswer('bobby juner', 'bobby jones', 'close');
+testAnswer('the untitld kingdom', 'the United Kingdom', 'close');
 testAnswer('opens and closes', 'open & close', true); // something with plurals?
 
 

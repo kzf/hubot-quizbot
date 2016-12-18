@@ -4,8 +4,9 @@ var natural = require('natural');
 
 function normalize(string) {
   return string.toLowerCase()
-               .replace(/\b(a|an|the|in|of|it|its|his|her|hers)\b/gi,'')
+               .replace(/\b(a|an|the|in|of|it|its|his|her|hers|and|or)\b/gi,'')
                .replace(/[^\w\s]/gi, '')
+               .replace(/s\b/gi, '')
                .trim();
 }
 
@@ -37,7 +38,7 @@ function matchScore(message, response, earlyExitThreshold, verbose) {
 
 function adjustScore(message, response, verbose) {
   var rawScore = matchScore(message, response, Infinity, verbose),
-      length = Math.pow(Math.min(message.length, response.length, 12), 1.2)/1.6;
+      length = Math.pow(Math.min(message.length, response.length, 12), 1.3)/2.5;
   if (verbose) console.log('    ---adjust [', message, '<==>', response, '] from ('+rawScore+') to ('+rawScore/length+')')
   return rawScore/length;
 }
@@ -55,7 +56,7 @@ function checkAnswer(message, response, verbose) {
   if (verbose) console.log('got score', score1, score2);
   var sc = Math.min(score1, score2);
   if (sc < 0.2) return true;
-  if (sc < 0.4) return 'close';
+  if (sc < 0.5) return 'close';
   if (normalMessage.length >= 5 && normalResponse.indexOf(normalMessage) >= 0) return 'close';
   return false;
 }

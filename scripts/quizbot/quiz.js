@@ -99,8 +99,8 @@ Quiz.prototype.askQuestions = function(_n, _category) {
   var n = parseInt(_n),
       category = _category && _category.trim();
   if (isNaN(n)) n = 1;
-  if (n > 5) {
-    this.sendMessage("I can't ask more than 5 questions at once!");
+  if (n > 10) {
+    this.sendMessage("I can't ask more than 10 questions at once!");
     return;
   }
   if (category) {

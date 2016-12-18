@@ -22,8 +22,12 @@ var Quiz = require('./quizbot/quiz.js'),
     _ = require('underscore'),
     Fs = require("fs");
 
+var MAX_BURST_MESSAGES = 5,
+    BURST_INTERVAL     = 1200,
+    MESSAGE_INTERVAL   = 40;
 
 module.exports = function (robot) {
+  var messageQueue = [];
   var sendMessage = function(arg1, arg2, attempts) {
     var opts = {room: process.env.ROCKETCHAT_ROOM},
         msg;
@@ -33,8 +37,23 @@ module.exports = function (robot) {
     } else {
       msg = arg1;
     }
-    robot.send(opts, msg);
+    messageQueue.push({opts: opts, msg: msg});
   };
+
+  // Send messages in small bursts to prevent us from
+  // hitting the system timeout, regardless of how many
+  // times we have called sendMessage
+  var i = 0;
+  var sendMessages = function() {
+    if (i === 0 && messageQueue.length > 0) {
+      messageQueue.splice(0, MAX_BURST_MESSAGES).forEach(function(m) {
+        robot.send(m.opts, m.msg);
+      });
+      i = Math.ceil(BURST_INTERVAL / MESSAGE_INTERVAL);
+    }
+    if (i > 0) i--;
+  };
+  setInterval(sendMessages, MESSAGE_INTERVAL);
 
   //
   //  ENVIORNMENT VARIABLE CHECKS

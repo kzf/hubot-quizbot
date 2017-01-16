@@ -1,3 +1,6 @@
 data/easiest2.json
-scripts/node_modules
+node_modules
 docker.sh
+start.sh
+prvt_start.sh
+*.log

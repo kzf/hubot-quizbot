@@ -129,8 +129,8 @@ module.exports = function (robot) {
     'endround' : function(res) {
       quiz.resetScores();
     },
-    'hints?' : function(res) {
-      quiz.getHints();
+    'hints?( \\d+)?' : function(res) {
+      quiz.getHints(res.match[1]);
     },
   };
 

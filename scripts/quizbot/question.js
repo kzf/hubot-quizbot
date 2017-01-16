@@ -1,4 +1,5 @@
 var natural = require('natural');
+var _ = require('underscore');
 
 // Answer matching
 
@@ -139,11 +140,29 @@ Question.prototype.getCloseAnswerMessage = function(response, user) {
 };
 
 Question.prototype.getHint = function(level) {
-  return getHint(this.answer, level || this.hintLevel);
+  if (!this.hintData) return '';
+  return this.hintData.map((d) => d.val).join('');
 };
 
 Question.prototype.improveHint = function() {
-  this.hintLevel++;
+  if (!this.hintData) {
+    this.hintData = _.flatten(this.answer.split(/\b/).map(function(word) {
+      if (word.match(/^\w+/)) {
+        return word.split('').map((w) => ({val: '_ ', real: w + ' '}));
+      } else if (word.match(/^\s+$/)) {
+        return {val: ' / '};
+      } else {
+        return {val: word};
+      }
+    }));
+    this.hintOrder = _.shuffle(_.filter(this.hintData, (d) => d.real));
+  } else if(this.hintOrder.length > 1) {
+    var nextHint = this.hintOrder.pop();
+    nextHint.val = nextHint.real;
+    nextHint.real = undefined;
+  }
 };
+
+
 
 module.exports = Question;

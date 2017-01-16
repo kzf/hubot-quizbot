@@ -1,0 +1,11 @@
+export ROCKETCHAT_ROOM='quiz'
+export ROCKETCHAT_URL=localhost:59436
+export ROCKETCHAT_USER=quizbot
+export ROCKETCHAT_PASSWORD=MY_USER_PASSWORD
+export ROCKETCHAT_AUTH=password
+export QUIZBOT_BANG_COMMANDS=true
+export QUIZBOT_SCORES_FILE=/user/dev/quizbot/data/myscores.json
+export QUIZBOT_QUESTIONS_FILE=/user/dev/quizbot/allqs.json
+export QUIZBOT_FORFEIT_TIME=300
+
+bin/hubot -a rocketchat

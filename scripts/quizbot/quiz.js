@@ -188,9 +188,10 @@ Quiz.prototype._forfeitQuestionInternal = function(question) {
 };
 
 // Get hint(s) to open questions
-Quiz.prototype.getHints = function() {
+Quiz.prototype.getHints = function(n) {
+  n = n || 1;
   this.questions.forEach(function(q) {
-    q.improveHint();
+    _.times(n, () => q.improveHint());
     var hint = q.getHint();
     if (hint) {
       this.sendMessage("**Q" + q.id + "** hint: `" + hint + "`");

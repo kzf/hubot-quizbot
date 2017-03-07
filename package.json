@@ -1,9 +1,9 @@
 {
-  "name": "quizbot",
+  "name": "hubot-quizbot",
   "version": "0.0.0",
   "private": true,
   "author": "kevinf@pronto.net",
-  "description": "Quiz bot",
+  "description": "Simple quiz bot for hubot",
   "dependencies": {
     "fs": "0.0.1-security",
     "hubot": "^2.19.0",
